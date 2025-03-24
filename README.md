@@ -1,5 +1,7 @@
 # PubMed MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@JackKuo666/pubmed-mcp-server)](https://smithery.ai/server/@JackKuo666/pubmed-mcp-server)
+
 🔍 Enable AI assistants to search, access, and analyze PubMed articles through a simple MCP interface.
 
 The PubMed MCP Server provides a bridge between AI assistants and PubMed's vast repository of biomedical literature through the Model Context Protocol (MCP). It allows AI models to search for scientific articles, access their metadata, and perform deep analysis in a programmatic way.
@@ -21,6 +23,14 @@ The PubMed MCP Server provides a bridge between AI assistants and PubMed's vast 
 
 - Python 3.10+
 - FastMCP library
+
+### Installing via Smithery
+
+To install pubmed-mcp-server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@JackKuo666/pubmed-mcp-server):
+
+```bash
+npx -y @smithery/cli install @JackKuo666/pubmed-mcp-server --client claude
+```
 
 ### Installation
 
