@@ -6,7 +6,7 @@ import re
 import requests
 
 def generate_pubmed_search_url(term=None, title=None, author=None, journal=None, 
-                               start_date=None, end_date=None, num_results=10):
+                               start_date=None, end_date=None, num_results=10, api_key=None):
     """根据用户输入的字段生成 PubMed 搜索 URL"""
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
     query_parts = []
@@ -30,6 +30,10 @@ def generate_pubmed_search_url(term=None, title=None, author=None, journal=None,
         "retmode": "xml"
     }
     
+    # Add API key if provided
+    if api_key:
+        params["api_key"] = api_key
+    
     return f"{base_url}?{'&'.join([f'{k}={v}' for k, v in params.items()])}"
 
 def search_pubmed(search_url):
@@ -48,9 +52,14 @@ def search_pubmed(search_url):
         print(f"Error: Unable to fetch data (status code: {response.status_code})")
         return []
 
-def get_pubmed_metadata(pmid):
+def get_pubmed_metadata(pmid, api_key=None):
     """使用 PubMed API 通过 PMID 获取文章的详细元数据"""
     url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={pmid}&retmode=xml"
+    
+    # Add API key if provided
+    if api_key:
+        url += f"&api_key={api_key}"
+    
     response = requests.get(url)
     
     if response.status_code == 200:
@@ -190,9 +199,13 @@ Ensure your analysis is thorough, objective, and based on the information provid
     
     return prompt
 
-def search_key_words(key_words, num_results=10):
+def search_key_words(key_words, num_results=10, api_key=None):
+    # Get API key from environment if not provided
+    if api_key is None:
+        api_key = os.getenv('NCBI_API_KEY')
+    
     # 生成搜索 URL
-    search_url = generate_pubmed_search_url(term=key_words, num_results=num_results)
+    search_url = generate_pubmed_search_url(term=key_words, num_results=num_results, api_key=api_key)
     print("Generated URL:", search_url)
 
     # 获取并解析搜索结果
@@ -200,17 +213,21 @@ def search_key_words(key_words, num_results=10):
     
     articles = []
     for pmid in pmids:
-        metadata = get_pubmed_metadata(pmid)
+        metadata = get_pubmed_metadata(pmid, api_key=api_key)
         if metadata:
             articles.append(metadata)
     
     return articles
 
-def search_advanced(term, title, author, journal, start_date, end_date, num_results):
+def search_advanced(term, title, author, journal, start_date, end_date, num_results, api_key=None):
+    # Get API key from environment if not provided
+    if api_key is None:
+        api_key = os.getenv('NCBI_API_KEY')
+    
     # 生成搜索 URL
     search_url = generate_pubmed_search_url(term=term, title=title, author=author, 
                                             journal=journal, start_date=start_date, 
-                                            end_date=end_date, num_results=num_results)
+                                            end_date=end_date, num_results=num_results, api_key=api_key)
     print("Generated URL:", search_url)
 
     # 获取并解析搜索结果
@@ -218,7 +235,7 @@ def search_advanced(term, title, author, journal, start_date, end_date, num_resu
     
     articles = []
     for pmid in pmids:
-        metadata = get_pubmed_metadata(pmid)
+        metadata = get_pubmed_metadata(pmid, api_key=api_key)
         if metadata:
             articles.append(metadata)
     
