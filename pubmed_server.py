@@ -1,6 +1,7 @@
 from typing import Any, List, Dict, Optional, Union
 import asyncio
 import logging
+import os
 from mcp.server.fastmcp import FastMCP
 from pubmed_web_search import search_key_words, search_advanced, get_pubmed_metadata, download_full_text_pdf, deep_paper_analysis
 
@@ -24,7 +25,8 @@ async def search_pubmed_key_words(key_words: str, num_results: int = 10) -> List
         List of dictionaries containing article information
     """
     try:
-        results = await asyncio.to_thread(search_key_words, key_words, num_results)
+        api_key = os.getenv('NCBI_API_KEY')
+        results = await asyncio.to_thread(search_key_words, key_words, num_results, api_key)
         return results
     except Exception as e:
         return [{"error": f"An error occurred while searching: {str(e)}"}]
@@ -56,9 +58,10 @@ async def search_pubmed_advanced(
         List of dictionaries containing article information
     """
     try:
+        api_key = os.getenv('NCBI_API_KEY')
         results = await asyncio.to_thread(
             search_advanced,
-            term, title, author, journal, start_date, end_date, num_results
+            term, title, author, journal, start_date, end_date, num_results, api_key
         )
         return results
     except Exception as e:
@@ -78,7 +81,8 @@ async def get_pubmed_article_metadata(pmid: Union[str, int]) -> Dict[str, Any]:
     """
     try:
         pmid_str = str(pmid)
-        metadata = await asyncio.to_thread(get_pubmed_metadata, pmid_str)
+        api_key = os.getenv('NCBI_API_KEY')
+        metadata = await asyncio.to_thread(get_pubmed_metadata, pmid_str, api_key)
         return metadata if metadata else {"error": f"No metadata found for PMID: {pmid_str}"}
     except Exception as e:
         return {"error": f"An error occurred while fetching metadata: {str(e)}"}
@@ -116,7 +120,8 @@ async def deep_paper_analysis(pmid: Union[str, int]) -> Dict[str, str]:
     """
     try:
         pmid_str = str(pmid)
-        metadata = await asyncio.to_thread(get_pubmed_metadata, pmid_str)
+        api_key = os.getenv('NCBI_API_KEY')
+        metadata = await asyncio.to_thread(get_pubmed_metadata, pmid_str, api_key)
         if not metadata:
             return {"error": f"No metadata found for PMID: {pmid_str}"}
             
