@@ -103,7 +103,7 @@ async def download_pubmed_pdf(pmid: Union[str, int]) -> str:
         return f"An error occurred while attempting to download the PDF: {str(e)}"
 
 @mcp.prompt()
-async def deep_paper_analysis(pmid: Union[str, int]) -> Dict[str, str]:
+async def deep_paper_analysis(pmid: Union[str, int]) -> str:
     logging.info(f"Performing deep paper analysis for PMID: {pmid}")
     """
     Perform a comprehensive analysis of a PubMed article.
@@ -112,23 +112,21 @@ async def deep_paper_analysis(pmid: Union[str, int]) -> Dict[str, str]:
         pmid: PMID of the article
 
     Returns:
-        Dictionary containing the comprehensive analysis structure
+        A prompt string for deep analysis of the paper
     """
     try:
         pmid_str = str(pmid)
         metadata = await asyncio.to_thread(get_pubmed_metadata, pmid_str)
         if not metadata:
-            return {"error": f"No metadata found for PMID: {pmid_str}"}
-            
+            return f"No metadata found for PMID: {pmid_str}"
+
         # 使用导入的 deep_paper_analysis 函数生成分析提示
         # 为避免递归调用，我们需要明确指定导入的函数
         from pubmed_web_search import deep_paper_analysis as web_deep_paper_analysis
         analysis_prompt = await asyncio.to_thread(web_deep_paper_analysis, metadata)
-        
-        # 返回包含分析提示的字典
-        return {"analysis_prompt": analysis_prompt}
+        return analysis_prompt
     except Exception as e:
-        return {"error": f"An error occurred while performing the deep paper analysis: {str(e)}"}
+        return f"An error occurred while performing the deep paper analysis: {str(e)}"
 
 if __name__ == "__main__":
     logging.info("Starting PubMed MCP server")
