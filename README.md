@@ -2,7 +2,7 @@
 
 # PubMed MCP Server
 
-[![smithery badge](https://smithery.ai/badge/@JackKuo666/pubmed-mcp-server)](https://smithery.ai/server/@JackKuo666/pubmed-mcp-server)
+[![LightNow capabilities](https://lightnow.ai/badge/io.github.jackkuo666/pubmed-mcp-server)](https://lightnow.ai/servers/io.github.jackkuo666/pubmed-mcp-server)
 
 🔍 Enable AI assistants to search, access, and analyze PubMed articles through a simple MCP interface.
 
